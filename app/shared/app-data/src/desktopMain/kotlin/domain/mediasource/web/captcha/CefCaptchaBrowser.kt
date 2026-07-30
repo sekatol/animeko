@@ -278,7 +278,13 @@ class CefCaptchaBrowser private constructor(
             val osToken = when (currentPlatformDesktop()) {
                 is Platform.MacOS -> "Macintosh; Intel Mac OS X 10_15_7"
                 is Platform.Windows -> "Windows NT 10.0; Win64; x64"
-                is Platform.Linux -> "X11; Linux x86_64"
+                is Platform.Linux -> {
+                    if (System.getenv("WAYLAND_DISPLAY") != null) {
+                        "Wayland; Linux x86_64"
+                    } else {
+                        "X11; Linux x86_64"
+                    }
+                }
             }
             return "Mozilla/5.0 ($osToken) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }

@@ -90,6 +90,7 @@ val isRedHatBased: Boolean by lazy {
 }
 
 compose.desktop {
+    nativeWayland.set(true)
     application {
         jvmArgs(
             "-XX:+UseZGC",
@@ -109,6 +110,12 @@ compose.desktop {
             jvmArgs(
                 "--add-opens=java.desktop/sun.lwawt=ALL-UNNAMED",
                 "--add-opens=java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
+            )
+        }
+        if (getOs() == Os.Linux) {
+            jvmArgs(
+                "-Dcompose.desktop.nativeWayland=true",
+                "-Dskiko.wayland.enable=true",
             )
         }
         mainClass = "me.him188.ani.app.desktop.AniDesktop"
@@ -374,6 +381,12 @@ fun JavaExec.configureDevProperties() {
         "-Xmx512m",
         "-XX:+EnableDynamicAgentLoading",
     )
+    if (getOs() == Os.Linux) {
+        this.jvmArgs(
+            "-Dcompose.desktop.nativeWayland=true",
+            "-Dskiko.wayland.enable=true",
+        )
+    }
     systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "TRACE")
     systemProperty("kotlinx.coroutines.debug", "on")
     systemProperty("ani.debug", "true")
